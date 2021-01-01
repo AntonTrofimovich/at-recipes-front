@@ -1,0 +1,6 @@
+<div class="at-recipes">
+    <div class="at-recipes-title">Recipes Storage</div>
+    <div class="at-recipes-item" *ngFor="let r of recipes$ | async">
+        {{ r.title }}
+    </div>
+</div>
