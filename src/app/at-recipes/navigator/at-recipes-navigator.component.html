@@ -1,0 +1,17 @@
+<div class="at-recipes-navigator">
+    <at-tabset
+        [data]="recipes$ | async"
+        [linkTemplate]="linkTemplate"
+        [contentTemplate]="contentTemplate"
+    >
+    </at-tabset>
+    <div class="at-recipes-item" *ngFor="let r of recipes$ | async">
+        {{ r.title }}
+    </div>
+</div>
+
+<ng-template #linkTemplate let-item="item | async">
+    <div class="at-recipes-navigator-link">item.title</div>
+</ng-template>
+
+<ng-template #contentTemplate></ng-template>

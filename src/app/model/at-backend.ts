@@ -8,3 +8,8 @@ export type AtResponse<T> = {
     success: boolean;
     data: T;
 };
+
+export type AtAddRecipeRequestBody = {
+    title: string;
+    description: string;
+};

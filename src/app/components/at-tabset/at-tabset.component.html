@@ -1,0 +1,25 @@
+<div class="d-flex">
+    <ul
+        ngbNav
+        #nav="ngbNav"
+        [destroyOnHide]="true"
+        [activeId]="(active$ | async)?.id"
+        (activeIdChange)="onActiveIdChange($event)"
+        class="nav-pills"
+        orientation="vertical"
+    >
+        <li *ngFor="let item of data" ngbNavItem="item.id">
+            <a ngbNavLink>
+                <ng-template
+                    *ngTemplateOutlet="linkTemplate; context: { item: item }"
+                ></ng-template>
+            </a>
+
+            <ng-template ngbNavContent>
+                <ng-template
+                    *ngTemplateOutlet="contentTemplate; context: { item: item }"
+                ></ng-template>
+            </ng-template>
+        </li>
+    </ul>
+</div>
