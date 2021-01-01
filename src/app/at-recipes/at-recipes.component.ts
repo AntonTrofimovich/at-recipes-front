@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
+import { AtRecipesDataService } from "../services/at-recipes-data.service";
 
 @Component({
     selector: "at-recipes",
@@ -7,9 +8,9 @@ import { Component, ChangeDetectionStrategy } from "@angular/core";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AtRecipesComponent {
-    constructor() {}
+    constructor(private readonly _recipesService: AtRecipesDataService) { }
 
-    // ngOnInit(): void {
-    //     this._recipesService.addRecipe("Anton", "Asdfaadf");
-    // }
+    ngOnInit(): void {
+        // this._recipesService.addRecipeResponse({ title: "Anton", description: "Asdfaadf" }).toPromise();
+    }
 }

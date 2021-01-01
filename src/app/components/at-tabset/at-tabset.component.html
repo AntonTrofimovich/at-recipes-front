@@ -1,25 +1,28 @@
-<div class="d-flex">
-    <ul
-        ngbNav
-        #nav="ngbNav"
-        [destroyOnHide]="true"
-        [activeId]="(active$ | async)?.id"
-        (activeIdChange)="onActiveIdChange($event)"
-        class="nav-pills"
-        orientation="vertical"
-    >
-        <li *ngFor="let item of data" ngbNavItem="item.id">
+<div class="at-tabset">
+    <ul class="at-tabset-list nav flex-column nav-pills">
+        <li class="at-tabset-list-item nav-item" *ngFor="let item of data" (click)="onTabClick($event, item)">
+            <a class="at-tabset-list-item-link nav-link" href="#" [class.active]="(active$ | async)?.id === item.id">
+                <ng-template *ngTemplateOutlet="linkTemplate; context: { item: item }"></ng-template>
+            </a>
+        </li>
+    </ul>
+
+    <div class="at-tabset-content" *ngIf="active$ | async as active">
+        <ng-template *ngTemplateOutlet="contentTemplate; context: { item: active }"></ng-template>
+    </div>
+</div>
+
+<!-- <div class="d-flex">
+    <ul ngbNav #nav="ngbNav" [activeId]="(active$ | async)?.id" (activeIdChange)="onActiveIdChange($event)"
+        class="nav-pills" orientation="vertical">
+        <li *ngFor="let item of data" [ngbNavItem]="item.id">
             <a ngbNavLink>
-                <ng-template
-                    *ngTemplateOutlet="linkTemplate; context: { item: item }"
-                ></ng-template>
+                <ng-template *ngTemplateOutlet="linkTemplate; context: { item: item }"></ng-template>
             </a>
 
             <ng-template ngbNavContent>
-                <ng-template
-                    *ngTemplateOutlet="contentTemplate; context: { item: item }"
-                ></ng-template>
+                <ng-template *ngTemplateOutlet="contentTemplate; context: { item: item }"></ng-template>
             </ng-template>
         </li>
     </ul>
-</div>
+</div> -->

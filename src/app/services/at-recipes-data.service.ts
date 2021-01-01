@@ -8,7 +8,9 @@ import {
     AtAddRecipeRequestBody,
 } from "../model/at-backend";
 
-@Injectable()
+@Injectable({
+    providedIn: "root"
+})
 export class AtRecipesDataService {
     constructor(private readonly _http: HttpClient) {}
 

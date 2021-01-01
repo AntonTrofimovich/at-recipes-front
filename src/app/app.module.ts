@@ -8,6 +8,8 @@ import { HttpClientModule } from "@angular/common/http";
 import { AtRecipesComponent } from "./at-recipes/at-recipes.component";
 import { AtRecipesNavigatorComponent } from "./at-recipes/navigator/at-recipes-navigator.component";
 import { AtTabsetComponent } from "./components/at-tabset/at-tabset.component";
+import { RecipesToTabsetDataPipe } from './at-recipes/navigator/recipes-to-tabset-data.pipe';
+import { GetRecipeByIdPipe } from './at-recipes/navigator/get-recipe-by-id.pipe';
 
 @NgModule({
     declarations: [
@@ -15,6 +17,8 @@ import { AtTabsetComponent } from "./components/at-tabset/at-tabset.component";
         AtRecipesComponent,
         AtRecipesNavigatorComponent,
         AtTabsetComponent,
+        RecipesToTabsetDataPipe,
+        GetRecipeByIdPipe,
     ],
     imports: [BrowserModule, AppRoutingModule, HttpClientModule, NgbModule],
     providers: [],
