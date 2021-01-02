@@ -8,8 +8,8 @@ import {
     Output,
     EventEmitter,
 } from "@angular/core";
-import { Observable, Subject, Subscription } from "rxjs";
-import { distinctUntilChanged } from "rxjs/operators";
+import { Observable, ReplaySubject, Subject, Subscription } from "rxjs";
+import { distinctUntilChanged, tap } from "rxjs/operators";
 
 type AtListData = {
     id: string;
@@ -33,9 +33,9 @@ export class AtListComponent<T extends AtListData> implements OnInit {
     @Output()
     public selectedItemHasBeenChanged: EventEmitter<T | null> = new EventEmitter();
 
-    private readonly _selected$: Subject<T | null> = new Subject();
+    private readonly _selected$: ReplaySubject<T | null> = new ReplaySubject(1);
     public readonly selected$: Observable<T | null> = this._selected$.pipe(
-        distinctUntilChanged((prev, next) => prev?.id === next?.id)
+        tap((v) => console.log(v))
     );
 
     private _subscriptions: Subscription[] = [];
@@ -49,7 +49,7 @@ export class AtListComponent<T extends AtListData> implements OnInit {
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
-        if (changes.active && !changes.active.isFirstChange()) {
+        if (changes.selected && !changes.selected.isFirstChange()) {
             this.setSelected(this.selected);
         }
     }
