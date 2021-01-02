@@ -1,35 +1,21 @@
-<div class="at-tabset">
-    <div class="at-tabset-list-container">
-        <ng-template *ngTemplateOutlet="tabsListAdjacent"></ng-template>
+<div class="at-list-container">
+    <ng-template *ngTemplateOutlet="listAdjacentTemplate"></ng-template>
 
-        <ul class="at-tabset-list nav flex-column nav-pills">
-            <li
-                class="at-tabset-list-item nav-item"
-                *ngFor="let item of data"
-                (click)="onTabClick($event, item)"
+    <ul class="at-list nav flex-column nav-pills">
+        <li
+            class="at-list-item nav-item"
+            *ngFor="let item of data"
+            (click)="onListItemClick($event, item)"
+        >
+            <a
+                class="at-list-item-link nav-link"
+                href="#"
+                [class.active]="(selected$ | async)?.id === item.id"
             >
-                <a
-                    class="at-tabset-list-item-link nav-link"
-                    href="#"
-                    [class.active]="(active$ | async)?.id === item.id"
-                >
-                    <ng-template
-                        *ngTemplateOutlet="
-                            linkTemplate;
-                            context: { item: item }
-                        "
-                    ></ng-template>
-                </a>
-            </li>
-        </ul>
-    </div>
-
-    <div class="at-tabset-content">
-        <ng-template
-            *ngTemplateOutlet="
-                contentTemplate;
-                context: { item: active$ | async }
-            "
-        ></ng-template>
-    </div>
+                <ng-template
+                    *ngTemplateOutlet="itemTemplate; context: { item: item }"
+                ></ng-template>
+            </a>
+        </li>
+    </ul>
 </div>

@@ -1,36 +1,23 @@
-.at-tabset {
-    display: flex;
+.at-list-container {
     height: 100%;
 
-    &-list-container {
+    .at-list {
         height: 100%;
 
-        flex: 0 0 400px;
+        &-item {
+            flex: 0 0 56px;
 
-        border-right: 1px solid #e6e6e6;
-    }
+            padding: 0 10px;
 
-    &-list-item {
-        flex: 0 0 56px;
-
-        padding: 0 10px;
-
-        &-link {
-            color: black;
-
-            padding: 1rem 1rem;
-
-            &.active {
+            &-link {
                 color: black;
+
+                padding: 1rem 1rem;
+
+                &.active {
+                    color: black;
+                }
             }
         }
-    }
-
-    &-content {
-        flex: 1;
-
-        padding: 0 24px;
-
-        overflow: hidden;
     }
 }

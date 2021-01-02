@@ -1,28 +1,27 @@
 <div class="at-recipes">
-    <at-tabset
-        [data]="recipes$ | async | recipesToTabsetData"
-        [active]="activeTab$ | async"
-        [tabsListAdjacent]="recipesToolbar"
-        [linkTemplate]="linkTemplate"
-        [contentTemplate]="contentTemplate"
-        (activeTabHasBeenChanged)=""
-    >
-    </at-tabset>
-</div>
-
-<ng-template #linkTemplate let-item="item">
-    <div class="at-recipes-link">
-        {{ (item.id | getRecipeById: (recipes$ | async))?.title }}
+    <div class="at-recipes-list">
+        <at-list
+            [data]="recipes$ | async"
+            [selected]="activeRecipe$ | async"
+            [itemTemplate]="itemTemplate"
+            [listAdjacentTemplate]="recipesToolbar"
+            (selectedItemHasBeenChanged)="onSelectedItemHasBeenChanged($event)"
+        >
+        </at-list>
     </div>
-</ng-template>
 
-<ng-template #contentTemplate let-item="item">
     <div class="at-recipes-editor-container">
         <at-recipes-editor></at-recipes-editor>
     </div>
+</div>
+
+<ng-template #itemTemplate let-item="item">
+    <div class="at-recipes-link">
+        {{ item?.title }}
+    </div>
 </ng-template>
 
-<ng-template #recipesToolbar let-item="item">
+<ng-template #recipesToolbar>
     <div class="at-recipes-toolbar-container">
         <at-recipes-toolbar></at-recipes-toolbar>
     </div>
