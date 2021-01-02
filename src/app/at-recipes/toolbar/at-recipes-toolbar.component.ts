@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
+import { AtRecipesService } from "../at-recipes.service";
 
 @Component({
     selector: "at-recipes-toolbar",
@@ -7,5 +8,13 @@ import { Component, ChangeDetectionStrategy } from "@angular/core";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AtRecipesToolbarComponent {
-    constructor() {}
+    constructor(private readonly _recipesService: AtRecipesService) {}
+
+    public onAddClick(): void {
+        this.triggerAddRecipe();
+    }
+
+    private triggerAddRecipe(): void {
+        this._recipesService.triggerAddRecipe();
+    }
 }

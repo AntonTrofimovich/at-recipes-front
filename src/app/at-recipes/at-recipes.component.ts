@@ -3,7 +3,7 @@ import { Observable } from "rxjs";
 import { share, map, filter } from "rxjs/operators";
 
 import { AtRecipe } from "../model/at-backend";
-import { AtTabsetData } from "../components/at-tabset/at-tabset.model";
+import { AtTabsetData } from "../components/at-list/at-tabset.model";
 import { AtRecipesService } from "./at-recipes.service";
 
 @Component({
@@ -14,12 +14,10 @@ import { AtRecipesService } from "./at-recipes.service";
     providers: [AtRecipesService],
 })
 export class AtRecipesComponent {
-    public readonly recipes$: Observable<
-        AtRecipe[]
-    > = this._recipesService.getRecipes().pipe(share());
+    public readonly recipes$: Observable<AtRecipe[]> = this._recipesService
+        .recipes$;
 
-    public readonly activeTab$: Observable<AtTabsetData> = this.recipes$.pipe(
-        map((r) => r[0]),
+    public readonly activeTab$: Observable<AtTabsetData> = this._recipesService.selectedRecipe$.pipe(
         filter((r) => !!r),
         map((r) => this.convertRecipeToTabSetData(r))
     );

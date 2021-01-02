@@ -1,3 +1,27 @@
 <div class="at-recipes-editor">
-    <div class="at-recipes-editor-empty-mask">No item selected</div>
+    <ng-template
+        *ngIf="selectedRecipe$ | async; then itemTemplate; else emptyTemplate"
+    ></ng-template>
 </div>
+
+<ng-template #emptyTemplate>
+    <div class="at-recipes-editor-empty-mask">No item selected</div>
+</ng-template>
+
+<ng-template #itemTemplate>
+    <ng-container [ngSwitch]="viewMode$ | async">
+        <div
+            class="at-recipes-editor-view-mode-container at-recipes-editor-mode-container"
+            *ngSwitchCase="AtRecipesEditorMode.View"
+        >
+            <at-recipes-editor-view-mode></at-recipes-editor-view-mode>
+        </div>
+
+        <div
+            class="at-recipes-editor-edit-mode-container at-recipes-editor-mode-container"
+            *ngSwitchCase="AtRecipesEditorMode.Edit"
+        >
+            <at-recipes-editor-edit-mode></at-recipes-editor-edit-mode>
+        </div>
+    </ng-container>
+</ng-template>

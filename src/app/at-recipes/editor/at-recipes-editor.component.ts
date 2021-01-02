@@ -1,5 +1,10 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
-import { AtRecipesEditorService } from "./at-recipes-editor.service";
+import { Observable } from "rxjs";
+import { AtRecipe } from "src/app/model/at-backend";
+import {
+    AtRecipesEditorMode,
+    AtRecipesEditorService,
+} from "./at-recipes-editor.service";
 
 @Component({
     selector: "at-recipes-editor",
@@ -9,5 +14,15 @@ import { AtRecipesEditorService } from "./at-recipes-editor.service";
     providers: [AtRecipesEditorService],
 })
 export class AtRecipesEditorComponent {
-    constructor() {}
+    public readonly AtRecipesEditorMode = AtRecipesEditorMode;
+
+    public readonly selectedRecipe$: Observable<AtRecipe> = this
+        ._recipesEditorService.selectedRecipe$;
+
+    public readonly viewMode$: Observable<AtRecipesEditorMode> = this
+        ._recipesEditorService.viewMode$;
+
+    constructor(
+        private readonly _recipesEditorService: AtRecipesEditorService
+    ) {}
 }

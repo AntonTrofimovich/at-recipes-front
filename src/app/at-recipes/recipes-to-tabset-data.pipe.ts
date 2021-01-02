@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from "@angular/core";
-import { AtTabsetData } from "../components/at-tabset/at-tabset.model";
+import { AtTabsetData } from "../components/at-list/at-tabset.model";
 
 import { AtRecipe } from "../model/at-backend";
 import { AtRecipesService } from "./at-recipes.service";

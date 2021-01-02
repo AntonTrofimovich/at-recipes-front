@@ -5,8 +5,10 @@ import {
     TemplateRef,
     Input,
     SimpleChanges,
+    Output,
+    EventEmitter,
 } from "@angular/core";
-import { Observable, Subject } from "rxjs";
+import { Observable, Subject, Subscription } from "rxjs";
 import { distinctUntilChanged } from "rxjs/operators";
 
 import { AtTabsetData } from "./at-tabset.model";
@@ -28,12 +30,21 @@ export class AtTabsetComponent implements OnInit {
 
     @Input() public active!: AtTabsetData | null;
 
+    @Output()
+    public activeTabHasBeenChanged: EventEmitter<AtTabsetData | null> = new EventEmitter();
+
     private readonly _active$: Subject<AtTabsetData | null> = new Subject();
     public readonly active$: Observable<AtTabsetData | null> = this._active$.pipe(
         distinctUntilChanged((prev, next) => prev?.id === next?.id)
     );
 
-    constructor() {}
+    private _subscriptions: Subscription[] = [];
+
+    constructor() {
+        this._subscriptions = [
+            this._active$.subscribe((v) => this.emitActiveTabHasBeenChanged(v)),
+        ];
+    }
 
     public ngOnChanges(changes: SimpleChanges): void {
         if (changes.active && !changes.active.isFirstChange()) {
@@ -43,6 +54,10 @@ export class AtTabsetComponent implements OnInit {
 
     public ngOnInit(): void {
         this.setInitialActive();
+    }
+
+    public ngOnDestroy(): void {
+        this._subscriptions.forEach((s) => s.unsubscribe());
     }
 
     public onTabClick(_: Event, item: AtTabsetData): void {
@@ -61,5 +76,9 @@ export class AtTabsetComponent implements OnInit {
         }
 
         this.setActive(active);
+    }
+
+    private emitActiveTabHasBeenChanged(v: AtTabsetData): void {
+        this.activeTabHasBeenChanged.emit(v);
     }
 }
