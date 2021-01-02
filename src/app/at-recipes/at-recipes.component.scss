@@ -1,19 +1,11 @@
 .at-recipes {
-    display: flex;
-    flex-direction: column;
-
     height: 100%;
 
-    &-title {
-        flex: 0 0 80px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    &-toolbar-container {
+        padding: 0 10px;
     }
 
-    &-navigator-container {
-        flex: 1;
-        overflow: hidden;
+    &-editor-container {
+        height: 100%;
     }
 }

@@ -1,7 +1,28 @@
 <div class="at-recipes">
-    <h1 class="at-recipes-title">Recipes Storage</h1>
-
-    <div class="at-recipes-navigator-container">
-        <at-recipes-navigator></at-recipes-navigator>
-    </div>
+    <at-tabset
+        [data]="recipes$ | async | recipesToTabsetData"
+        [active]="activeTab$ | async"
+        [tabsListAdjacent]="recipesToolbar"
+        [linkTemplate]="linkTemplate"
+        [contentTemplate]="contentTemplate"
+    >
+    </at-tabset>
 </div>
+
+<ng-template #linkTemplate let-item="item">
+    <div class="at-recipes-link">
+        {{ (item.id | getRecipeById: (recipes$ | async))?.title }}
+    </div>
+</ng-template>
+
+<ng-template #contentTemplate let-item="item">
+    <div class="at-recipes-editor-container">
+        <at-recipes-editor></at-recipes-editor>
+    </div>
+</ng-template>
+
+<ng-template #recipesToolbar let-item="item">
+    <div class="at-recipes-toolbar-container">
+        <at-recipes-toolbar></at-recipes-toolbar>
+    </div>
+</ng-template>

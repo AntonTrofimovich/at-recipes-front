@@ -1,3 +1,20 @@
 .at-app {
+    display: flex;
+    flex-direction: column;
+
     height: 100%;
+
+    &-title {
+        flex: 0 0 80px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &-recipes {
+        flex: 1;
+
+        overflow: hidden;
+    }
 }

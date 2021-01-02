@@ -2,12 +2,19 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 
-import { AtRecipe } from "../../model/at-backend";
+import { AtRecipe } from "../model/at-backend";
+import { AtTabsetData } from "../components/at-tabset/at-tabset.model";
 import { AtRecipesDataService } from "src/app/services/at-recipes-data.service";
 
 @Injectable()
-export class AtRecipesNavigatorService {
+export class AtRecipesService {
     constructor(private readonly _recipesDataService: AtRecipesDataService) {}
+
+    public convertRecipeToTabSetData(r: AtRecipe): AtTabsetData {
+        return {
+            id: r.id,
+        };
+    }
 
     public getRecipes(): Observable<AtRecipe[]> {
         return this._recipesDataService

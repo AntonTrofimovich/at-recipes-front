@@ -1,16 +1,32 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
-import { AtRecipesDataService } from "../services/at-recipes-data.service";
+import { Observable } from "rxjs";
+import { share, map, filter } from "rxjs/operators";
+
+import { AtRecipe } from "../model/at-backend";
+import { AtTabsetData } from "../components/at-tabset/at-tabset.model";
+import { AtRecipesService } from "./at-recipes.service";
 
 @Component({
     selector: "at-recipes",
     templateUrl: "./at-recipes.component.html",
     styleUrls: ["./at-recipes.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [AtRecipesService],
 })
 export class AtRecipesComponent {
-    constructor(private readonly _recipesService: AtRecipesDataService) { }
+    public readonly recipes$: Observable<
+        AtRecipe[]
+    > = this._recipesService.getRecipes().pipe(share());
 
-    ngOnInit(): void {
-        // this._recipesService.addRecipeResponse({ title: "Anton", description: "Asdfaadf" }).toPromise();
+    public readonly activeTab$: Observable<AtTabsetData> = this.recipes$.pipe(
+        map((r) => r[0]),
+        filter((r) => !!r),
+        map((r) => this.convertRecipeToTabSetData(r))
+    );
+
+    constructor(private readonly _recipesService: AtRecipesService) {}
+
+    private convertRecipeToTabSetData(r: AtRecipe): AtTabsetData {
+        return this._recipesService.convertRecipeToTabSetData(r);
     }
 }

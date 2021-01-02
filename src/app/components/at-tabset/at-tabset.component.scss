@@ -2,22 +2,26 @@
     display: flex;
     height: 100%;
 
-    &-list {
+    &-list-container {
+        height: 100%;
+
         flex: 0 0 400px;
 
-        &-item {
-            flex: 0 0 56px;
+        border-right: 1px solid #e6e6e6;
+    }
 
-            padding: 0 10px;
+    &-list-item {
+        flex: 0 0 56px;
 
-            &-link {
+        padding: 0 10px;
+
+        &-link {
+            color: black;
+
+            padding: 1rem 1rem;
+
+            &.active {
                 color: black;
-
-                padding: 1rem 1rem;
-
-                &.active {
-                    color: black;
-                }
             }
         }
     }
@@ -26,8 +30,6 @@
         flex: 1;
 
         padding: 0 24px;
-
-        border-left: 1px solid #e6e6e6;
 
         overflow: hidden;
     }

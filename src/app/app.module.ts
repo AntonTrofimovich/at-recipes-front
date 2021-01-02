@@ -1,26 +1,27 @@
-import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
-import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
-
-import { AppRoutingModule } from "./app-routing.module";
-import { AppComponent } from "./app.component";
+import { BrowserModule } from "@angular/platform-browser";
 import { HttpClientModule } from "@angular/common/http";
-import { AtRecipesComponent } from "./at-recipes/at-recipes.component";
-import { AtRecipesNavigatorComponent } from "./at-recipes/navigator/at-recipes-navigator.component";
+
+import { AppComponent } from "./app.component";
+import { AppRoutingModule } from "./app-routing.module";
+import { GetRecipeByIdPipe } from "./at-recipes/get-recipe-by-id.pipe";
 import { AtTabsetComponent } from "./components/at-tabset/at-tabset.component";
-import { RecipesToTabsetDataPipe } from './at-recipes/navigator/recipes-to-tabset-data.pipe';
-import { GetRecipeByIdPipe } from './at-recipes/navigator/get-recipe-by-id.pipe';
+import { AtRecipesComponent } from "./at-recipes/at-recipes.component";
+import { RecipesToTabsetDataPipe } from "./at-recipes/recipes-to-tabset-data.pipe";
+import { AtRecipesToolbarComponent } from "./at-recipes/toolbar/at-recipes-toolbar.component";
+import { AtRecipesEditorComponent } from "./at-recipes/editor/at-recipes-editor.component";
 
 @NgModule({
     declarations: [
         AppComponent,
         AtRecipesComponent,
-        AtRecipesNavigatorComponent,
         AtTabsetComponent,
         RecipesToTabsetDataPipe,
         GetRecipeByIdPipe,
+        AtRecipesToolbarComponent,
+        AtRecipesEditorComponent,
     ],
-    imports: [BrowserModule, AppRoutingModule, HttpClientModule, NgbModule],
+    imports: [BrowserModule, AppRoutingModule, HttpClientModule],
     providers: [],
     bootstrap: [AppComponent],
 })

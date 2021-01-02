@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "./node_modules/.bin/ng",
-    "start": "./node_modules/.bin/ng serve --host 0.0.0.0",
+    "start": "./node_modules/.bin/ng serve --poll 100 --host 0.0.0.0",
     "build": "./node_modules/.bin/ng build"
   },
   "private": true,

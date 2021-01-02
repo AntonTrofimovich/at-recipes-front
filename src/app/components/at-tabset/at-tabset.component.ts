@@ -9,9 +9,7 @@ import {
 import { Observable, Subject } from "rxjs";
 import { distinctUntilChanged } from "rxjs/operators";
 
-export type AtTabsetData = {
-    id: string;
-};
+import { AtTabsetData } from "./at-tabset.model";
 
 @Component({
     selector: "at-tabset",
@@ -26,14 +24,16 @@ export class AtTabsetComponent implements OnInit {
 
     @Input() public contentTemplate!: TemplateRef<HTMLElement>;
 
-    @Input() public active!: AtTabsetData;
+    @Input() public tabsListAdjacent!: TemplateRef<HTMLElement>;
+
+    @Input() public active!: AtTabsetData | null;
 
     private readonly _active$: Subject<AtTabsetData | null> = new Subject();
     public readonly active$: Observable<AtTabsetData | null> = this._active$.pipe(
         distinctUntilChanged((prev, next) => prev?.id === next?.id)
     );
 
-    constructor() { }
+    constructor() {}
 
     public ngOnChanges(changes: SimpleChanges): void {
         if (changes.active && !changes.active.isFirstChange()) {
@@ -46,7 +46,7 @@ export class AtTabsetComponent implements OnInit {
     }
 
     public onTabClick(_: Event, item: AtTabsetData): void {
-        this.setActive(item)
+        this.setActive(item);
     }
 
     private setActive(v: AtTabsetData | null): void {
