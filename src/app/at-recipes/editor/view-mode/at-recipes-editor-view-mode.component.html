@@ -1,3 +1,9 @@
 <div class="at-recipes-editor-view-mode">
-    View Mode
+    <h3 class="at-recipes-editor-view-mode-title">
+        {{ (selectedRecipe$ | async)?.title }}
+    </h3>
+
+    <div class="at-recipes-editor-view-mode-description">
+        <p>{{ (selectedRecipe$ | async)?.description }}</p>
+    </div>
 </div>

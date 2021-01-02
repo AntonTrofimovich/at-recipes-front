@@ -20,11 +20,11 @@ import { AtRecipesEditorService } from "../at-recipes-editor.service";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AtRecipesEditorEditModeComponent {
-    private readonly _saveHasBeenTriggered$: Subject<void> = new Subject();
-
     public readonly selectedRecipe$: Observable<AtRecipe> = this._recipesEditorService.selectedRecipe$.pipe(
         share()
     );
+
+    private readonly _saveHasBeenTriggered$: Subject<void> = new Subject();
 
     private readonly _title$: Subject<string> = new Subject();
     private readonly _description$: Subject<string> = new Subject();
