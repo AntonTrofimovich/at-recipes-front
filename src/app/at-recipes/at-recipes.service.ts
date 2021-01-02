@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
-import { merge, Observable, Subject, Subscription } from "rxjs";
+import { merge, Observable, of, Subject, Subscription } from "rxjs";
 import {
+    distinctUntilChanged,
     filter,
     first,
     map,
@@ -26,10 +27,8 @@ export class AtRecipesService {
     private readonly _addRecipeHasBeenTriggered$: Subject<void> = new Subject();
     public readonly addRecipeHasBeenTriggered$: Observable<void> = this._addRecipeHasBeenTriggered$.asObservable();
 
-    private readonly _manuallySelectedRecipe$: Subject<AtRecipe> = new Subject();
-    private readonly _selectedRecipe$: Observable<AtRecipe> = merge(
-        this._manuallySelectedRecipe$
-    );
+    private readonly _selectedRecipe$: Subject<AtRecipe> = new Subject();
+
     public readonly selectedRecipe$: Observable<AtRecipe> = this.recipes$.pipe(
         first(),
         map((r) => r && r[0]),
@@ -84,6 +83,16 @@ export class AtRecipesService {
                     this.onRecipeHasBeenSaved(result, recipes)
                 ),
 
+            this._deleteRecipeHasBeenTriggered$
+                .pipe(
+                    switchMap(() => this.selectedRecipe$.pipe(first())),
+                    switchMap((r) => this.deleteRecipe(r)),
+                    withLatestFrom(this.recipes$)
+                )
+                .subscribe(([result, recipes]) =>
+                    this.onRecipeHasBeenDeleted(result, recipes)
+                ),
+
             this.cancelEditHasBeenTriggered$
                 .pipe(
                     switchMap(() => this.selectedRecipe$.pipe(first())),
@@ -111,12 +120,24 @@ export class AtRecipesService {
             .pipe(map((v) => v.data));
     }
 
+    private deleteRecipe(r: AtRecipe): Observable<number> {
+        const isEmpty = this.isEmptyRecipe(r);
+
+        if (isEmpty) {
+            return of(r.id);
+        }
+
+        return this._recipesDataService
+            .deleteRecipeResponse(r.id)
+            .pipe(map((v) => +v.data));
+    }
+
     private hasEmptyRecipe(recipes: AtRecipe[]): boolean {
         return recipes.some((r) => this.isEmptyRecipe(r));
     }
 
     private isEmptyRecipe(r: AtRecipe): boolean {
-        return r.id === "";
+        return r.id === Infinity;
     }
 
     private onRecipeHasBeenSaved(recipe: AtRecipe, recipes: AtRecipe[]): void {
@@ -147,8 +168,37 @@ export class AtRecipesService {
         this.setSelectedRecipe(updatedRecipes[updatedRecipes.length - 1]);
     }
 
+    private onRecipeHasBeenDeleted(
+        recipeId: number,
+        recipes: AtRecipe[]
+    ): void {
+        const recipe = recipes.find((r) => r.id === recipeId);
+        if (!recipe) {
+            return;
+        }
+
+        const isEmpty = this.isEmptyRecipe(recipe);
+
+        if (!isEmpty) {
+            const i = recipes.findIndex((r) => r.id === recipeId);
+            const updatedRecipes = [
+                ...recipes.slice(0, i),
+                ...recipes.slice(i + 1),
+            ];
+            this.setRecipes(updatedRecipes);
+            const nextIndex = i - 1 >= 0 ? i - 1 : 0;
+            this.setSelectedRecipe(updatedRecipes[nextIndex]);
+
+            return;
+        }
+
+        const updatedRecipes = this.getRecipesWithoutTemporary(recipes);
+        this.setRecipes(updatedRecipes);
+        this.setSelectedRecipe(updatedRecipes[updatedRecipes.length - 1]);
+    }
+
     public setSelectedRecipe(v: AtRecipe): void {
-        this._manuallySelectedRecipe$.next(v);
+        this._selectedRecipe$.next(v);
     }
 
     public triggerAddRecipe(): void {
@@ -175,13 +225,19 @@ export class AtRecipesService {
         updatedRecipe: AtRecipe,
         recipes: AtRecipe[]
     ): AtRecipe[] {
-        const prevRecipe = recipes.find((r) => r.id === updatedRecipe.id);
+        const updatedRecipeIndex = recipes.findIndex(
+            (r) => r.id === updatedRecipe.id
+        );
 
-        if (!prevRecipe) {
+        if (updatedRecipeIndex === -1) {
             return [...this.getRecipesWithoutTemporary(recipes), updatedRecipe];
         }
 
-        return recipes;
+        return [
+            ...recipes.slice(0, updatedRecipeIndex),
+            updatedRecipe,
+            ...recipes.slice(updatedRecipeIndex + 1),
+        ];
     }
 
     private setRecipes(v: AtRecipe[]): void {
@@ -194,7 +250,7 @@ export class AtRecipesService {
 
     private getEmptyRecipe(): AtRecipe {
         return {
-            id: "",
+            id: Infinity,
             title: "New Recipe",
             description: "",
         };

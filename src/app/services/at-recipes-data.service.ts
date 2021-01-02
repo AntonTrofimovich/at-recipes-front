@@ -24,4 +24,10 @@ export class AtRecipesDataService {
             body
         );
     }
+
+    public deleteRecipeResponse(id: number): Observable<AtResponse<string>> {
+        return this._http.delete<AtResponse<string>>(
+            `http://localhost:3000/recipes/delete/${id}`
+        );
+    }
 }

@@ -12,7 +12,7 @@ import { merge, Observable, ReplaySubject, Subject, Subscription } from "rxjs";
 import { distinctUntilChanged, share, shareReplay, tap } from "rxjs/operators";
 
 type AtListData = {
-    id: string;
+    id: number;
 };
 
 @Component({

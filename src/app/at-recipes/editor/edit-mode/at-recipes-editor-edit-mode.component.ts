@@ -25,8 +25,6 @@ export class AtRecipesEditorEditModeComponent {
 
     private readonly _saveHasBeenTriggered$: Subject<void> = new Subject();
 
-    private readonly _cancelHasBeenTriggered$: Subject<void> = new Subject();
-
     private readonly _title$: Subject<string> = new Subject();
     private readonly _description$: Subject<string> = new Subject();
 

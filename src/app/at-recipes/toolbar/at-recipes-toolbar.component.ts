@@ -18,11 +18,19 @@ export class AtRecipesToolbarComponent {
         this.triggerEditRecipe();
     }
 
+    public onDeleteClick(): void {
+        this.triggerDeleteRecipe();
+    }
+
     private triggerAddRecipe(): void {
         this._recipesService.triggerAddRecipe();
     }
 
     private triggerEditRecipe(): void {
         this._recipesService.triggerEditRecipe();
+    }
+
+    private triggerDeleteRecipe(): void {
+        this._recipesService.triggerDeleteRecipe();
     }
 }
