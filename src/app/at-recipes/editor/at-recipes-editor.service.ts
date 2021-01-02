@@ -19,16 +19,18 @@ export class AtRecipesEditorService {
             this._recipesService.editRecipeHasBeenTriggered$
         ).pipe(mapTo(AtRecipesEditorMode.Edit)),
 
-        this._recipesService.deleteRecipeHasBeenTriggered$.pipe(
-            mapTo(AtRecipesEditorMode.View)
-        )
+        merge(
+            this._recipesService.deleteRecipeHasBeenTriggered$,
+            this._recipesService.saveRecipeHasBeenTriggered$
+        ).pipe(mapTo(AtRecipesEditorMode.View))
     ).pipe(
         startWith(AtRecipesEditorMode.View),
         shareReplay({ bufferSize: 1, refCount: true })
     );
 
-    public readonly selectedRecipe$: Observable<AtRecipe> = this._recipesService
-        .selectedRecipe$;
+    public readonly selectedRecipe$: Observable<AtRecipe> = this._recipesService.selectedRecipe$.pipe(
+        shareReplay({ bufferSize: 1, refCount: true })
+    );
 
     private readonly _subscriptions: Subscription[] = [];
 
@@ -38,5 +40,9 @@ export class AtRecipesEditorService {
 
     public ngOnDestroy(): void {
         this._subscriptions.forEach((s) => s.unsubscribe());
+    }
+
+    public triggerSave(v: AtRecipe): void {
+        this._recipesService.triggerSaveRecipe(v);
     }
 }

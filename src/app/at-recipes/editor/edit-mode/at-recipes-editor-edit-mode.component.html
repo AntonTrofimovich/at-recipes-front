@@ -1,3 +1,31 @@
 <div class="at-recipes-editor-edit-mode">
-    <div class="at-recipes-editor-empty-mask">Edit Mode</div>
+    <div class="at-recipes-editor-edit-mode-title">
+        <label for="reciptTitle">Recipe Title:</label>
+
+        <input
+            type="text"
+            class="form-control"
+            id="reciptTitle"
+            placeholder="Recipe Title"
+            [ngModel]="(selectedRecipe$ | async)?.title"
+            (input)="onTitleChange($event)"
+        />
+    </div>
+
+    <div class="at-recipes-editor-edit-mode-description">
+        <label for="recipeDescription">Recipe Description:</label>
+        <textarea
+            [ngModel]="(selectedRecipe$ | async)?.description"
+            class="form-control"
+            id="recipeDescription"
+            (input)="onDescriptionChange($event)"
+        ></textarea>
+    </div>
+
+    <div class="at-recipes-editor-edit-mode-buttons">
+        <button type="button" class="btn btn-secondary">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="onSaveClick()">
+            Save
+        </button>
+    </div>
 </div>

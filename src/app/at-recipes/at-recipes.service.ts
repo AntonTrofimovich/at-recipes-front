@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { merge, Observable, Subject } from "rxjs";
+import { merge, Observable, Subject, Subscription } from "rxjs";
 import {
     first,
     map,
@@ -8,6 +8,7 @@ import {
     shareReplay,
     startWith,
     switchMap,
+    withLatestFrom,
 } from "rxjs/operators";
 
 import { AtRecipe } from "../model/at-backend";
@@ -19,7 +20,9 @@ export class AtRecipesService {
     public readonly recipes$: Observable<AtRecipe[]> = this.getRecipes().pipe(
         switchMap((recipes) => this._recipes$.pipe(startWith(recipes))),
         switchMap((recipes) =>
-            this.getAddRecipeHasBeenTriggeredObservable(recipes)
+            this.getAddRecipeHasBeenTriggeredObservable(recipes).pipe(
+                startWith(recipes)
+            )
         ),
         share()
     );
@@ -40,7 +43,7 @@ export class AtRecipesService {
         first(),
         map((r) => r && r[0]),
         switchMap((initial) => this._selectedRecipe$.pipe(startWith(initial))),
-        share()
+        shareReplay({ bufferSize: 1, refCount: true })
     );
 
     private readonly _editRecipeHasBeenTriggered$: Subject<void> = new Subject();
@@ -49,25 +52,44 @@ export class AtRecipesService {
     private readonly _deleteRecipeHasBeenTriggered$: Subject<void> = new Subject();
     public readonly deleteRecipeHasBeenTriggered$: Observable<void> = this._deleteRecipeHasBeenTriggered$.asObservable();
 
-    private readonly _saveRecipeHasBeenTriggered$: Subject<void> = new Subject();
-    public readonly saveRecipeHasBeenTriggered$: Observable<void> = this._saveRecipeHasBeenTriggered$.asObservable();
+    private readonly _saveRecipeHasBeenTriggered$: Subject<AtRecipe> = new Subject();
+    public readonly saveRecipeHasBeenTriggered$: Observable<AtRecipe> = this._saveRecipeHasBeenTriggered$.asObservable();
 
     private readonly _cancelRecipeHasBeenTriggered$: Subject<void> = new Subject();
     public readonly cancelRecipeHasBeenTriggered$: Observable<void> = this._cancelRecipeHasBeenTriggered$.asObservable();
 
-    constructor(private readonly _recipesDataService: AtRecipesDataService) {}
+    private readonly _subscriptions: Subscription[] = [];
 
-    public getRecipes(): Observable<AtRecipe[]> {
+    constructor(private readonly _recipesDataService: AtRecipesDataService) {
+        this._subscriptions = [
+            this._saveRecipeHasBeenTriggered$
+                .pipe(
+                    switchMap((r) => this.saveRecipe(r)),
+                    withLatestFrom(this.recipes$)
+                )
+                .subscribe(([result, recipes]) =>
+                    this.onRecipeHasBeenSaved(result, recipes)
+                ),
+        ];
+    }
+
+    private getRecipes(): Observable<AtRecipe[]> {
         return this._recipesDataService
             .getRecipesResponse()
             .pipe(map((r) => r.data));
     }
 
-    public addRecipe(title: string, description: string): Promise<AtRecipe> {
+    private saveRecipe(r: AtRecipe): Promise<AtRecipe> {
         return this._recipesDataService
-            .addRecipeResponse({ title, description })
+            .saveRecipeResponse(r)
             .pipe(map((v) => v.data))
             .toPromise();
+    }
+
+    private onRecipeHasBeenSaved(recipe: AtRecipe, recipes: AtRecipe[]): void {
+        this.setRecipes(this.getUpdatedRecipesCollection(recipe, recipes));
+
+        this.setSelectedRecipe(recipe);
     }
 
     public setSelectedRecipe(v: AtRecipe): void {
@@ -86,8 +108,8 @@ export class AtRecipesService {
         this._deleteRecipeHasBeenTriggered$.next();
     }
 
-    public triggerSaveRecipe(title: string, description: string): void {
-        this._saveRecipeHasBeenTriggered$.next();
+    public triggerSaveRecipe(v: AtRecipe): void {
+        this._saveRecipeHasBeenTriggered$.next(v);
     }
 
     private getAddRecipeHasBeenTriggeredObservable(
@@ -97,6 +119,27 @@ export class AtRecipesService {
             first(),
             mapTo([...recipes, this.getEmptyRecipe()])
         );
+    }
+
+    private getUpdatedRecipesCollection(
+        updatedRecipe: AtRecipe,
+        recipes: AtRecipe[]
+    ): AtRecipe[] {
+        const prevRecipe = recipes.find((r) => r.id === updatedRecipe.id);
+
+        if (!prevRecipe) {
+            return [...this.getRecipesWithoutRemporary(recipes), updatedRecipe];
+        }
+
+        return recipes;
+    }
+
+    private setRecipes(v: AtRecipe[]): void {
+        this._recipes$.next(v);
+    }
+
+    private getRecipesWithoutRemporary(recipes: AtRecipe[]): AtRecipe[] {
+        return recipes.slice(0, recipes.length - 1);
     }
 
     private getEmptyRecipe(): AtRecipe {

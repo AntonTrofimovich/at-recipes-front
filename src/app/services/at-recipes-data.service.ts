@@ -2,14 +2,10 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 
-import {
-    AtResponse,
-    AtRecipe,
-    AtAddRecipeRequestBody,
-} from "../model/at-backend";
+import { AtResponse, AtRecipe } from "../model/at-backend";
 
 @Injectable({
-    providedIn: "root"
+    providedIn: "root",
 })
 export class AtRecipesDataService {
     constructor(private readonly _http: HttpClient) {}
@@ -20,11 +16,11 @@ export class AtRecipesDataService {
         );
     }
 
-    public addRecipeResponse(
-        body: AtAddRecipeRequestBody
+    public saveRecipeResponse(
+        body: AtRecipe
     ): Observable<AtResponse<AtRecipe>> {
         return this._http.post<AtResponse<AtRecipe>>(
-            "http://localhost:3000/recipes/add",
+            "http://localhost:3000/recipes/save",
             body
         );
     }
