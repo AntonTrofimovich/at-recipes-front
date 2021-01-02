@@ -14,7 +14,15 @@ export class AtRecipesToolbarComponent {
         this.triggerAddRecipe();
     }
 
+    public onEditClick(): void {
+        this.triggerEditRecipe();
+    }
+
     private triggerAddRecipe(): void {
         this._recipesService.triggerAddRecipe();
+    }
+
+    private triggerEditRecipe(): void {
+        this._recipesService.triggerEditRecipe();
     }
 }

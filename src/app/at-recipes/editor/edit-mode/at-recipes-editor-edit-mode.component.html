@@ -6,9 +6,8 @@
             type="text"
             class="form-control"
             id="reciptTitle"
-            placeholder="Recipe Title"
             [ngModel]="(selectedRecipe$ | async)?.title"
-            (input)="onTitleChange($event)"
+            (ngModelChange)="onTitleChange($event)"
         />
     </div>
 
@@ -18,7 +17,7 @@
             [ngModel]="(selectedRecipe$ | async)?.description"
             class="form-control"
             id="recipeDescription"
-            (input)="onDescriptionChange($event)"
+            (ngModelChange)="onDescriptionChange($event)"
         ></textarea>
     </div>
 

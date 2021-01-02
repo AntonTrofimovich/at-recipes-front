@@ -8,8 +8,8 @@ import {
     Output,
     EventEmitter,
 } from "@angular/core";
-import { Observable, ReplaySubject, Subject, Subscription } from "rxjs";
-import { distinctUntilChanged, tap } from "rxjs/operators";
+import { merge, Observable, ReplaySubject, Subject, Subscription } from "rxjs";
+import { distinctUntilChanged, share, shareReplay, tap } from "rxjs/operators";
 
 type AtListData = {
     id: string;
@@ -34,15 +34,18 @@ export class AtListComponent<T extends AtListData> implements OnInit {
     public selectedItemHasBeenChanged: EventEmitter<T | null> = new EventEmitter();
 
     private readonly _selected$: ReplaySubject<T | null> = new ReplaySubject(1);
-    public readonly selected$: Observable<T | null> = this._selected$.pipe(
-        tap((v) => console.log(v))
-    );
+
+    private readonly _manuallySelected$: Subject<T> = new Subject();
+    public readonly selected$: Observable<T | null> = merge(
+        this._selected$,
+        this._manuallySelected$
+    ).pipe(distinctUntilChanged((prev, next) => prev?.id === next?.id));
 
     private _subscriptions: Subscription[] = [];
 
     constructor() {
         this._subscriptions = [
-            this._selected$.subscribe((v) =>
+            this._manuallySelected$.subscribe((v) =>
                 this.emitSelectedListItemHasBeenChanged(v)
             ),
         ];
@@ -63,7 +66,11 @@ export class AtListComponent<T extends AtListData> implements OnInit {
     }
 
     public onListItemClick(_: Event, item: T): void {
-        this.setSelected(item);
+        this.setManuallySelected(item);
+    }
+
+    private setManuallySelected(v: T): void {
+        this._manuallySelected$.next(v);
     }
 
     private setSelected(v: T | null): void {

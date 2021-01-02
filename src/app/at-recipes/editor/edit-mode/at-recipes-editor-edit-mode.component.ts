@@ -4,7 +4,6 @@ import {
     first,
     map,
     scan,
-    share,
     shareReplay,
     switchMap,
     switchMapTo,
@@ -21,7 +20,7 @@ import { AtRecipesEditorService } from "../at-recipes-editor.service";
 })
 export class AtRecipesEditorEditModeComponent {
     public readonly selectedRecipe$: Observable<AtRecipe> = this._recipesEditorService.selectedRecipe$.pipe(
-        share()
+        shareReplay({ bufferSize: 1, refCount: true })
     );
 
     private readonly _saveHasBeenTriggered$: Subject<void> = new Subject();
@@ -40,7 +39,6 @@ export class AtRecipesEditorEditModeComponent {
         private readonly _recipesEditorService: AtRecipesEditorService
     ) {
         this._subscriptions = [
-            this._editedRecipe$.subscribe(),
             this._saveHasBeenTriggered$
                 .pipe(switchMapTo(this._editedRecipe$.pipe(first())))
                 .subscribe((r) => this.save(r)),

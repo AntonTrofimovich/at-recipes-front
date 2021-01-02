@@ -1,7 +1,16 @@
 import { Injectable } from "@angular/core";
 import { timeStamp } from "console";
 import { BehaviorSubject, Observable, merge, Subscription } from "rxjs";
-import { map, mapTo, share, shareReplay, startWith } from "rxjs/operators";
+import {
+    first,
+    map,
+    mapTo,
+    share,
+    shareReplay,
+    startWith,
+    switchMap,
+    takeUntil,
+} from "rxjs/operators";
 
 import { AtRecipe } from "../../model/at-backend";
 import { AtRecipesService } from "../at-recipes.service";
@@ -13,6 +22,13 @@ export enum AtRecipesEditorMode {
 
 @Injectable()
 export class AtRecipesEditorService {
+    // private readonly _anyActionHasHappened$: Observable<void> = merge(
+    //     this._recipesService.addRecipeHasBeenTriggered$,
+    //     this._recipesService.editRecipeHasBeenTriggered$,
+    //     this._recipesService.deleteRecipeHasBeenTriggered$,
+    //     this._recipesService.cancelRecipeHasBeenTriggered$
+    // );
+
     public readonly viewMode$: Observable<AtRecipesEditorMode> = merge(
         merge(
             this._recipesService.addRecipeHasBeenTriggered$,
