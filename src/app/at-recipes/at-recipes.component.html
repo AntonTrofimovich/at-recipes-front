@@ -1,28 +1,9 @@
 <div class="at-recipes">
-    <div class="at-recipes-list">
-        <at-list
-            [data]="recipes$ | async"
-            [selected]="activeRecipe$ | async"
-            [itemTemplate]="itemTemplate"
-            [listAdjacentTemplate]="recipesToolbar"
-            (selectedItemHasBeenChanged)="onSelectedItemHasBeenChanged($event)"
-        >
-        </at-list>
+    <div class="at-recipes-list-container">
+        <at-recipes-list> </at-recipes-list>
     </div>
 
     <div class="at-recipes-editor-container">
         <at-recipes-editor></at-recipes-editor>
     </div>
 </div>
-
-<ng-template #itemTemplate let-item="item">
-    <div class="at-recipes-link">
-        {{ item?.title }}
-    </div>
-</ng-template>
-
-<ng-template #recipesToolbar>
-    <div class="at-recipes-toolbar-container">
-        <at-recipes-toolbar></at-recipes-toolbar>
-    </div>
-</ng-template>

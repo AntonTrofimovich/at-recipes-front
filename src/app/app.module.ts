@@ -10,6 +10,7 @@ import { AtRecipesToolbarComponent } from "./at-recipes/toolbar/at-recipes-toolb
 import { AtRecipesEditorComponent } from "./at-recipes/editor/at-recipes-editor.component";
 import { AtRecipesEditorViewModeComponent } from "./at-recipes/editor/view-mode/at-recipes-editor-view-mode.component";
 import { AtRecipesEditorEditModeComponent } from "./at-recipes/editor/edit-mode/at-recipes-editor-edit-mode.component";
+import { AtRecipesListComponent } from './at-recipes/list/at-recipes-list.component';
 
 @NgModule({
     declarations: [
@@ -20,6 +21,7 @@ import { AtRecipesEditorEditModeComponent } from "./at-recipes/editor/edit-mode/
         AtRecipesEditorComponent,
         AtRecipesEditorViewModeComponent,
         AtRecipesEditorEditModeComponent,
+        AtRecipesListComponent,
     ],
     imports: [BrowserModule, AppRoutingModule, HttpClientModule],
     providers: [],
