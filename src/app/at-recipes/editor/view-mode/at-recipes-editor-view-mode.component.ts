@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { Observable } from "rxjs";
-import { share } from "rxjs/operators";
+import { share, shareReplay } from "rxjs/operators";
 
 import { AtRecipe } from "../../../model/at-backend";
 import { AtRecipesEditorService } from "../at-recipes-editor.service";
@@ -13,7 +13,7 @@ import { AtRecipesEditorService } from "../at-recipes-editor.service";
 })
 export class AtRecipesEditorViewModeComponent {
     public readonly selectedRecipe$: Observable<AtRecipe> = this._recipesEditorService.selectedRecipe$.pipe(
-        share()
+        shareReplay({ bufferSize: 1, refCount: true })
     );
 
     constructor(

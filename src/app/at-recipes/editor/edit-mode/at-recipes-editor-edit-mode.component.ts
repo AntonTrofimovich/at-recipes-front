@@ -25,6 +25,8 @@ export class AtRecipesEditorEditModeComponent {
 
     private readonly _saveHasBeenTriggered$: Subject<void> = new Subject();
 
+    private readonly _cancelHasBeenTriggered$: Subject<void> = new Subject();
+
     private readonly _title$: Subject<string> = new Subject();
     private readonly _description$: Subject<string> = new Subject();
 
@@ -39,6 +41,7 @@ export class AtRecipesEditorEditModeComponent {
         private readonly _recipesEditorService: AtRecipesEditorService
     ) {
         this._subscriptions = [
+            this._editedRecipe$.subscribe(),
             this._saveHasBeenTriggered$
                 .pipe(switchMapTo(this._editedRecipe$.pipe(first())))
                 .subscribe((r) => this.save(r)),
@@ -53,12 +56,16 @@ export class AtRecipesEditorEditModeComponent {
         this.triggerSave();
     }
 
-    public onTitleChange(e: InputEvent): void {
-        this.setTitle((e.target as HTMLInputElement).value);
+    public onCancelClick(): void {
+        this.triggerCancel();
     }
 
-    public onDescriptionChange(e: InputEvent): void {
-        this.setDescription((e.target as HTMLInputElement).value);
+    public onTitleChange(v: string): void {
+        this.setTitle(v);
+    }
+
+    public onDescriptionChange(v: string): void {
+        this.setDescription(v);
     }
 
     private setTitle(v: string) {
@@ -71,6 +78,10 @@ export class AtRecipesEditorEditModeComponent {
 
     private triggerSave(): void {
         this._saveHasBeenTriggered$.next();
+    }
+
+    private triggerCancel(): void {
+        this._recipesEditorService.triggerCancel();
     }
 
     private save(v: AtRecipe): void {

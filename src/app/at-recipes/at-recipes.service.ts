@@ -52,8 +52,8 @@ export class AtRecipesService {
         share()
     );
 
-    private readonly _cancelRecipeHasBeenTriggered$: Subject<void> = new Subject();
-    public readonly cancelRecipeHasBeenTriggered$: Observable<void> = this._cancelRecipeHasBeenTriggered$.pipe(
+    private readonly _cancelEditHasBeenTriggered$: Subject<void> = new Subject();
+    public readonly cancelEditHasBeenTriggered$: Observable<void> = this._cancelEditHasBeenTriggered$.pipe(
         share()
     );
 
@@ -83,6 +83,15 @@ export class AtRecipesService {
                 .subscribe(([result, recipes]) =>
                     this.onRecipeHasBeenSaved(result, recipes)
                 ),
+
+            this.cancelEditHasBeenTriggered$
+                .pipe(
+                    switchMap(() => this.selectedRecipe$.pipe(first())),
+                    withLatestFrom(this.recipes$)
+                )
+                .subscribe(([recipe, recipes]) =>
+                    this.onRecipeEditHasBeenCancelled(recipe, recipes)
+                ),
         ];
     }
 
@@ -96,11 +105,10 @@ export class AtRecipesService {
             .pipe(map((r) => r.data));
     }
 
-    private saveRecipe(r: AtRecipe): Promise<AtRecipe> {
+    private saveRecipe(r: AtRecipe): Observable<AtRecipe> {
         return this._recipesDataService
             .saveRecipeResponse(r)
-            .pipe(map((v) => v.data))
-            .toPromise();
+            .pipe(map((v) => v.data));
     }
 
     private hasEmptyRecipe(recipes: AtRecipe[]): boolean {
@@ -124,6 +132,21 @@ export class AtRecipesService {
         this.setSelectedRecipe(empty);
     }
 
+    private onRecipeEditHasBeenCancelled(
+        recipe: AtRecipe,
+        recipes: AtRecipe[]
+    ): void {
+        const isEmpty = this.isEmptyRecipe(recipe);
+
+        if (!isEmpty) {
+            return;
+        }
+
+        const updatedRecipes = this.getRecipesWithoutTemporary(recipes);
+        this.setRecipes(updatedRecipes);
+        this.setSelectedRecipe(updatedRecipes[updatedRecipes.length - 1]);
+    }
+
     public setSelectedRecipe(v: AtRecipe): void {
         this._manuallySelectedRecipe$.next(v);
     }
@@ -142,6 +165,10 @@ export class AtRecipesService {
 
     public triggerSaveRecipe(v: AtRecipe): void {
         this._saveRecipeHasBeenTriggered$.next(v);
+    }
+
+    public triggerCancelEdit(): void {
+        this._cancelEditHasBeenTriggered$.next();
     }
 
     private getUpdatedRecipesCollection(

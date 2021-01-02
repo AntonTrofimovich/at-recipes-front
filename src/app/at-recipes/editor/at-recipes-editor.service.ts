@@ -37,7 +37,8 @@ export class AtRecipesEditorService {
 
         merge(
             this._recipesService.deleteRecipeHasBeenTriggered$,
-            this._recipesService.saveRecipeHasBeenTriggered$
+            this._recipesService.saveRecipeHasBeenTriggered$,
+            this._recipesService.cancelEditHasBeenTriggered$
         ).pipe(mapTo(AtRecipesEditorMode.View))
     ).pipe(
         startWith(AtRecipesEditorMode.View),
@@ -60,5 +61,9 @@ export class AtRecipesEditorService {
 
     public triggerSave(v: AtRecipe): void {
         this._recipesService.triggerSaveRecipe(v);
+    }
+
+    public triggerCancel(): void {
+        this._recipesService.triggerCancelEdit();
     }
 }
