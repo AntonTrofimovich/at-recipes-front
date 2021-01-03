@@ -13,6 +13,7 @@ import { AtRecipesEditorEditModeComponent } from "./at-recipes/editor/edit-mode/
 import { AtRecipesListComponent } from "./at-recipes/list/at-recipes-list.component";
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
     declarations: [
@@ -31,6 +32,7 @@ import { CommonModule } from "@angular/common";
         AppRoutingModule,
         HttpClientModule,
         FormsModule,
+        FontAwesomeModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

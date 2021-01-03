@@ -1,5 +1,23 @@
 <div class="at-recipes-toolbar">
-    <div class="at-recipes-toolbar-edit" (click)="onEditClick()">Edit</div>
-    <div class="at-recipes-toolbar-delete" (click)="onDeleteClick()">Delete</div>
-    <div class="at-recipes-toolbar-add" (click)="onAddClick()">Add</div>
+    <div
+        class="at-recipes-toolbar-item at-recipes-toolbar-edit"
+        [class.at-recipes-toolbar-item__disabled]="isEditDisabled$ | async"
+        (click)="onEditClick()"
+    >
+        <fa-icon [icon]="faPen"></fa-icon>
+    </div>
+    <div
+        class="at-recipes-toolbar-item at-recipes-toolbar-delete"
+        [class.at-recipes-toolbar-item__disabled]="isDeleteDisabled$ | async"
+        (click)="onDeleteClick()"
+    >
+        <fa-icon [icon]="faTrash"></fa-icon>
+    </div>
+    <div
+        class="at-recipes-toolbar-item at-recipes-toolbar-add"
+        [class.at-recipes-toolbar-item__disabled]="isAddDisabled$ | async"
+        (click)="onAddClick()"
+    >
+        <fa-icon [icon]="faPlus"></fa-icon>
+    </div>
 </div>

@@ -120,7 +120,7 @@ export class AtRecipesService {
         return r.id === this.getEmptyRecipe().id;
     }
 
-    private hasEmptyRecipe(recipes: AtRecipe[]): boolean {
+    public hasEmptyRecipe(recipes: AtRecipe[]): boolean {
         return recipes.some((r) => this.isRecipeEmpty(r));
     }
 

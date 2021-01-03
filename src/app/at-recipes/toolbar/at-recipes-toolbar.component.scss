@@ -3,6 +3,22 @@
 
     justify-content: flex-end;
 
+    &-item {
+        cursor: pointer;
+
+        &:hover fa-icon {
+            color: #007bff;
+        }
+
+        &__disabled {
+            pointer-events: none;
+
+            fa-icon {
+                opacity: 0.5;
+            }
+        }
+    }
+
     & > * + * {
         margin-left: 8px;
     }
