@@ -125,6 +125,14 @@ export class AtRecipesService {
     }
 
     private areRecipesSame(first: AtRecipe, second: AtRecipe): boolean {
+        if (!first && !second) {
+            return true;
+        }
+
+        if (!first || !second) {
+            return false;
+        }
+
         return (
             first.id === second.id &&
             first.description === second.description &&

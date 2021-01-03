@@ -76,6 +76,7 @@ export class AtRecipesEditorService {
 
     private getEmptyRecipeHasBeenSelectedObservable(): Observable<void> {
         return this._recipesService.selectedRecipe$.pipe(
+            filter((r) => !!r),
             filter((r) => this.isRecipeEmpty(r)),
             mapTo(undefined)
         );
