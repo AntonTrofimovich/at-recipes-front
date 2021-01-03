@@ -5,6 +5,7 @@ import {
     map,
     scan,
     shareReplay,
+    startWith,
     switchMap,
     switchMapTo,
 } from "rxjs/operators";
@@ -90,6 +91,9 @@ export class AtRecipesEditorEditModeComponent {
         return merge(
             this._title$.pipe(map((title) => ({ title }))),
             this._description$.pipe(map((description) => ({ description })))
-        ).pipe(scan((result, value) => ({ ...result, ...value }), recipe));
+        ).pipe(
+            scan((result, value) => ({ ...result, ...value }), recipe),
+            startWith(recipe)
+        );
     }
 }

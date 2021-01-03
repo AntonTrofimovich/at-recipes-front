@@ -1,6 +1,16 @@
 import { Injectable } from "@angular/core";
-import { Observable, merge, Subscription } from "rxjs";
-import { mapTo, shareReplay, startWith } from "rxjs/operators";
+import { Observable, merge, Subscription, of } from "rxjs";
+import {
+    filter,
+    first,
+    map,
+    mapTo,
+    shareReplay,
+    skip,
+    startWith,
+    switchMap,
+    switchMapTo,
+} from "rxjs/operators";
 
 import { AtRecipe } from "../../model/at-backend";
 import { AtRecipesService } from "../at-recipes.service";
@@ -12,25 +22,24 @@ export enum AtRecipesEditorMode {
 
 @Injectable()
 export class AtRecipesEditorService {
-    // private readonly _anyActionHasHappened$: Observable<void> = merge(
-    //     this._recipesService.addRecipeHasBeenTriggered$,
-    //     this._recipesService.editRecipeHasBeenTriggered$,
-    //     this._recipesService.deleteRecipeHasBeenTriggered$,
-    //     this._recipesService.cancelRecipeHasBeenTriggered$
-    // );
-
     public readonly viewMode$: Observable<AtRecipesEditorMode> = merge(
         merge(
-            this._recipesService.addRecipeHasBeenTriggered$,
+            this.getEmptyRecipeHasBeenSelectedObservable(),
             this._recipesService.editRecipeHasBeenTriggered$
         ).pipe(mapTo(AtRecipesEditorMode.Edit)),
 
-        merge(
-            this._recipesService.deleteRecipeHasBeenTriggered$,
-            this._recipesService.saveRecipeHasBeenTriggered$,
-            this._recipesService.cancelEditHasBeenTriggered$
-        ).pipe(mapTo(AtRecipesEditorMode.View))
+        this._recipesService.cancelEditHasBeenTriggered$.pipe(
+            mapTo(AtRecipesEditorMode.View)
+        )
     ).pipe(
+        switchMap((mode) =>
+            mode === AtRecipesEditorMode.Edit
+                ? this.getRecipeHasBeenChangedObservable().pipe(
+                      mapTo(AtRecipesEditorMode.View),
+                      startWith(mode)
+                  )
+                : of(mode)
+        ),
         startWith(AtRecipesEditorMode.View),
         shareReplay({ bufferSize: 1, refCount: true })
     );
@@ -55,5 +64,24 @@ export class AtRecipesEditorService {
 
     public triggerCancel(): void {
         this._recipesService.triggerCancelEdit();
+    }
+
+    private getRecipeHasBeenChangedObservable(): Observable<void> {
+        return this._recipesService.selectedRecipe$.pipe(
+            skip(1),
+            first(),
+            mapTo(undefined)
+        );
+    }
+
+    private getEmptyRecipeHasBeenSelectedObservable(): Observable<void> {
+        return this._recipesService.selectedRecipe$.pipe(
+            filter((r) => this.isRecipeEmpty(r)),
+            mapTo(undefined)
+        );
+    }
+
+    private isRecipeEmpty(r: AtRecipe): boolean {
+        return this._recipesService.isRecipeEmpty(r);
     }
 }

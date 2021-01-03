@@ -1,6 +1,10 @@
 .at-recipes-list {
     height: 100%;
 
+    &-link {
+        font-weight: 500;
+    }
+
     &-toolbar-container {
         padding: 0 10px;
     }

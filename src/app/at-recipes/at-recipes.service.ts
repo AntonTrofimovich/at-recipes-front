@@ -32,7 +32,14 @@ export class AtRecipesService {
     public readonly selectedRecipe$: Observable<AtRecipe> = this.recipes$.pipe(
         first(),
         map((r) => r && r[0]),
-        switchMap((initial) => this._selectedRecipe$.pipe(startWith(initial))),
+        switchMap((initial) =>
+            this._selectedRecipe$.pipe(
+                distinctUntilChanged((prev, next) =>
+                    this.areRecipesSame(prev, next)
+                ),
+                startWith(initial)
+            )
+        ),
         shareReplay({ bufferSize: 1, refCount: true })
     );
 
@@ -86,6 +93,7 @@ export class AtRecipesService {
             this._deleteRecipeHasBeenTriggered$
                 .pipe(
                     switchMap(() => this.selectedRecipe$.pipe(first())),
+                    filter((r) => !!r),
                     switchMap((r) => this.deleteRecipe(r)),
                     withLatestFrom(this.recipes$)
                 )
@@ -106,6 +114,22 @@ export class AtRecipesService {
 
     public ngOnDestroy(): void {
         this._subscriptions.forEach((s) => s.unsubscribe());
+    }
+
+    public isRecipeEmpty(r: AtRecipe): boolean {
+        return r.id === this.getEmptyRecipe().id;
+    }
+
+    private hasEmptyRecipe(recipes: AtRecipe[]): boolean {
+        return recipes.some((r) => this.isRecipeEmpty(r));
+    }
+
+    private areRecipesSame(first: AtRecipe, second: AtRecipe): boolean {
+        return (
+            first.id === second.id &&
+            first.description === second.description &&
+            first.title === second.title
+        );
     }
 
     private getRecipes(): Observable<AtRecipe[]> {
@@ -132,10 +156,6 @@ export class AtRecipesService {
             .pipe(map((v) => +v.data));
     }
 
-    private hasEmptyRecipe(recipes: AtRecipe[]): boolean {
-        return recipes.some((r) => this.isEmptyRecipe(r));
-    }
-
     private isEmptyRecipe(r: AtRecipe): boolean {
         return r.id === Infinity;
     }
@@ -149,7 +169,7 @@ export class AtRecipesService {
     private onAddRecipeHasBeenTriggered(recipes: AtRecipe[]): void {
         const empty = this.getEmptyRecipe();
 
-        this.setRecipes([...recipes, empty]);
+        this.setRecipes([...(recipes || []), empty]);
         this.setSelectedRecipe(empty);
     }
 
